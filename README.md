@@ -17,7 +17,7 @@ R:\ にドライブとしてマウントして、通常のエクスプローラ�
 
 ###  2. リポジトリの複製
 
-次に、本リポジトリを複製するか、[こちら](https://github.com/ActiveTK/RecoveryMagic/archive/refs/heads/main.zip)からダウンロードして展開してください。
+次に、本リポジトリを複製するか、[Releases](https://github.com/ActiveTK/RecoveryMagic/archive/refs/heads/main.zip)からダウンロードして展開してください。
 
 ```bash
 git clone https://github.com/ActiveTK/RecoveryMagic
@@ -26,7 +26,7 @@ cd RecoveryMagic/bin
 
 ### 3. かいふくまほう！の実行
 
-1. `bin/RecoveryMagic.exe` を起動
+1. `RecoveryMagic.exe` を起動
 2. 復元したいファイルを含むドライブを指定
 3. 「マウント」ボタンをクリック！
 4. 🎈 仮想ドライブ `R:\` が出現！削除したデータだけを含むドライブが現れます！ 🎈
