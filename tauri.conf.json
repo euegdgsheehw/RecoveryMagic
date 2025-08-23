@@ -1,0 +1,35 @@
+{
+  "package": {
+    "productName": "RecoveryMagic",
+    "version": "0.1.0"
+  },
+  "build": {
+    "devPath": "gui",
+    "distDir": "gui",
+    "withGlobalTauri": true
+  },
+  "tauri": {
+    "windows": [
+      {
+        "title": "かいふくまほう！",
+        "width": 1000,
+        "height": 720,
+        "resizable": false,
+        "maximizable": false,
+        "fullscreen": false,
+        "visible": true,
+        "center": true
+      }
+    ],
+    "security": {
+      "csp": null
+    },
+    "bundle": {
+      "active": false,
+      "identifier": "tech.end2end.recoverymagic"
+    },
+    "allowlist": {
+      "all": true
+    }
+  }
+}

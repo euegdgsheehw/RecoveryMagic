@@ -1,2 +1,68 @@
-# RecoveryMagic
-今までにない次世代のファイル復元ツール。
+# かいふくまほう！🔮🖥️✨
+
+削除されたファイルを「元のディレクトリ構成そのまま」で仮想ドライブとしてマウントできる、次世代のファイル復元ツールです。
+
+内部では NTFS の $MFT を読み取り、削除済みエントリをインデックス化して Dokan 経由で読み取り専用の仮想ファイルシステムを構築します。
+R:\ にドライブとしてマウントして、通常のエクスプローラやアプリから読み取り可能にします。
+
+また、独自機能「ファイルをAIに探してもらう」を実装しており、自然言語で削除したファイルを検索できます(例:「さっき消しちゃったExcelのデータない？」)。
+
+## 🛠️ 使い方
+
+###  1. Dokanyの準備
+
+まず初めに、[こちら](https://github.com/dokan-dev/dokany/releases/download/v2.2.1.1000/DokanSetup.exe)からDokanyをインストールしてください。
+
+###  2. リポジトリの複製
+
+次に、本リポジトリを複製するか、[こちら](https://github.com/ActiveTK/RecoveryMagic/archive/refs/heads/main.zip)からダウンロードして展開してください。
+
+```bash
+git clone https://github.com/ActiveTK/RecoveryMagic
+cd RecoveryMagic/bin
+```
+
+### 3. かいふくまほう！の実行
+
+1. `bin/RecoveryMagic.exe` を起動
+2. 復元したいファイルを含むドライブを指定
+3. 「マウント」ボタンをクリック！
+4. 🎈 仮想ドライブ `R:\` が出現！普通のドライブのように使えます！ 🎈
+
+## 🧰 ソースからビルドする方法
+
+本アプリは Tauri（Rust + GUI）を使う構成です。Rustとcargo、及びDokanをあらかじめインストールしておいてください。
+
+リポジトリを複製した後、以下のコマンドでビルドができます。
+
+```bash
+cargo build
+```
+
+リリースとしてビルドする場合には、以下のコマンドを実行してください。
+
+```bash
+cargo build --release
+```
+
+## ⚠️ 注意事項
+
+- 🔓 実行には管理者権限が必要です。
+- 🔥 巨大なドライブを扱うとメモリ消費が増加します。
+- 💾 既にデータがドライブ上から完全に消失している場合は復元できません。
+- ⚠️ 「ファイルをAIに探してもらう」機能ではファイル一覧を外部ホストへPOSTします*。
+
+※必要に応じて独自にOpenAIのSecret Keyを取得して、自前でファイル検索用のサーバーを[セットアップ](https://github.com/ActiveTK/RecoveryMagic/blob/main/backend/README.md)することもできます。
+
+## 📦 必要ライブラリ・依存
+
+- 📦 [Dokan.NET](https://github.com/dokan-dev/dokan-dotnet)
+
+※ 本アプリはWindows専用ですのでご注意ください。
+
+## 📄 ライセンス
+
+このプログラムは The MIT License の下で公開されています。
+
+© 2025 ActiveTK.  
+🔗 https://github.com/ActiveTK/RecoveryMagic/blob/main/LICENSE

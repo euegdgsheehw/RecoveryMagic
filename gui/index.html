@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>かいふくまほう！</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-slate-950 text-slate-100 antialiased">
+  <div class="max-w-5xl mx-auto p-6 space-y-6">
+    <header class="flex items-center justify-between">
+      <h1 class="text-2xl font-semibold tracking-tight">かいふくまほう！</h1>
+      <div class="text-xs text-slate-400">(c) 2025 ActiveTK.</div>
+    </header>
+
+    <section class="bg-slate-900/60 border border-slate-800 rounded-xl p-4">
+      <h2 class="text-sm font-medium text-slate-300 mb-3">
+        復元したいファイルを含むドライブを選択
+      </h2>
+      <div class="flex flex-col md:flex-row gap-3 items-stretch md:items-center">
+        <select id="driveSelect"
+          class="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+          <option value="" disabled selected>読み込み中...</option>
+        </select>
+        <div class="flex gap-2">
+          <button id="refreshBtn" class="px-3 py-2 rounded-lg bg-slate-800 border border-slate-700 hover:bg-slate-700">
+            再読み込み
+          </button>
+          <button id="mountBtn"
+            class="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed">
+            マウント開始
+          </button>
+          <button id="ejectBtn" class="hidden px-4 py-2 rounded-lg bg-rose-600 hover:bg-rose-500">
+            R:\ を取り出す
+          </button>
+        </div>
+      </div>
+      <p id="driveHint" class="mt-2 text-xs text-slate-400">
+        ※NTFSのドライブのみ表示されています。
+      </p>
+    </section>
+
+    <section id="progressSection" class="bg-slate-900/60 border border-slate-800 rounded-xl p-4 space-y-2">
+      <div class="flex items-center justify-between">
+        <div class="text-sm text-slate-300">マウント進行状況</div>
+        <div id="progText" class="text-xs text-slate-400">待機中</div>
+      </div>
+      <div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
+        <div id="progBar" class="bg-indigo-500 h-2 w-[0%] transition-all duration-200"></div>
+      </div>
+    </section>
+
+    <section id="askSection" class="hidden bg-slate-900/60 border border-slate-800 rounded-xl p-4 space-y-4">
+      <div class="space-y-3">
+        <h2 class="text-sm font-medium text-slate-300">ファイルをAIに探してもらう</h2>
+        <div class="flex gap-2 items-stretch">
+          <div class="relative flex-1">
+            <input id="askInput" type="text" placeholder="例: さっき消しちゃったエクセルのデータどこかにない？"
+              class="w-full pr-20 bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+            <button id="recBtn" title="音声入力を開始/停止"
+              class="absolute inset-y-0 right-2 my-auto px-3 py-1.5 text-sm rounded-md bg-slate-700 hover:bg-slate-600 disabled:opacity-50 disabled:cursor-not-allowed">
+              🎙 開始
+            </button>
+          </div>
+          <button id="askBtn"
+            class="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed">
+            聞いてみる
+          </button>
+        </div>
+        <p class="text-xs text-slate-400">※復元ファイルのリストがgpt-4o-miniに送信されますので、ご注意ください。</p>
+      </div>
+
+      <div id="askResults" class="space-y-3"></div>
+    </section>
+
+    <details id="logDetails" class="bg-slate-900/60 border border-slate-800 rounded-xl">
+      <summary class="list-none cursor-pointer select-none px-4 py-3 flex items-center justify-between">
+        <span class="text-sm text-slate-300">ログ</span>
+        <span class="text-xs text-slate-500">クリックで開閉</span>
+      </summary>
+      <div class="p-4 pt-0">
+        <div class="flex items-center justify-end mb-2">
+          <button id="clearLogBtn" class="text-xs text-slate-400 hover:text-slate-200">クリア</button>
+        </div>
+        <textarea id="logArea"
+          class="w-full h-56 bg-slate-950 border border-slate-800 rounded-lg p-2 font-mono text-xs leading-5 resize-y"
+          readonly></textarea>
+      </div>
+    </details>
+  </div>
+
+  <script>
+    (function () {
+      if (!window.__onTauriReadyQueue) window.__onTauriReadyQueue = [];
+      window.addEventListener("tauri://ready", () => {
+        window.__TAURI_READY__ = true;
+        const q = window.__onTauriReadyQueue;
+        if (Array.isArray(q)) for (const fn of q.splice(0)) { try { fn(); } catch (_) { } }
+      }, { once: true });
+
+      const buf = [];
+      function pushEarly(msg) { buf.push(msg); }
+      window.__drainEarlyLogs = function () {
+        const ta = document.getElementById("logArea");
+        if (!ta) return;
+        for (const line of buf.splice(0)) {
+          const at = new Date().toISOString().replace("T", " ").replace("Z", "");
+          ta.value += `[${at}] ${line}\n`;
+          ta.scrollTop = ta.scrollHeight;
+        }
+      };
+      window.addEventListener("error", (e) => pushEarly(`(JS Error) ${e.message} @ ${e.filename}:${e.lineno}`));
+      window.addEventListener("unhandledrejection", (e) => pushEarly(`(Promise Rejection) ${String(e.reason)}`));
+      document.addEventListener("DOMContentLoaded", () => window.__drainEarlyLogs());
+    })();
+  </script>
+
+  <script src="./app.js"></script>
+</body>
+
+</html>
