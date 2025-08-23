@@ -17,7 +17,7 @@ R:\ にドライブとしてマウントして、通常のエクスプローラ�
 
 ###  2. リポジトリの複製
 
-次に、本リポジトリを複製するか、[Releases](https://github.com/ActiveTK/RecoveryMagic/archive/refs/heads/main.zip)からダウンロードして展開してください。
+次に、本リポジトリを複製するか、[Releases](https://github.com/ActiveTK/RecoveryMagic/releases)からダウンロードして展開してください。
 
 ```bash
 git clone https://github.com/ActiveTK/RecoveryMagic
